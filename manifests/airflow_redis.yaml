@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-redis
+  namespace: airflow
+  labels:
+    app: airflow-redis
+spec:
+  selector:
+    matchLabels:
+      app: airflow-redis
+  template:
+    metadata:
+      labels:
+        app: airflow-redis
+    spec:
+      containers:
+      - name: airflow-redis
+        image: redis:5.0.0-alpine
+        resources:
+          limits:
+            memory: "256Mi"
+          requests:
+            memory: "256Mi"
+        ports:
+        - name: airflow-redis
+          containerPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.version: 1.2.0
+  labels:
+    app: airflow-redis
+  name: airflow-redis
+  namespace: etl
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6379
+      targetPort: 6379
+      protocol: TCP
+      name: airflow-redis
+  selector:
+    app: airflow-redis

@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-worker
+  namespace: airflow
+  labels:
+    app: airflow-worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: airflow-worker
+  template:
+    metadata:
+      labels:
+        app: airflow-worker
+    spec:
+      containers:
+      - name: airflow-worker
+        image: <your image>
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          allowPrivilegeEscalation: false
+        resources:
+          limits:
+            memory: "1024Mi"
+          requests:
+            memory: "1024Mi"
+        command:
+        - /entrypoint.sh
+        - scheduler
+        env:
+        - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+          valueFrom:
+            secretKeyRef:
+              name: airflow-secret
+              key: db_uri
+        - name: AIRFLOW__CELERY__RESULT_BACKEND
+          valueFrom:
+            secretKeyRef:
+              name: airflow-secret
+              key: db_uri
+        - name: FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: airflow-secret
+              key: fernet_key
+        - name: EXECUTOR
+          value: "Celery"
+        - name: AIRFLOW__CORE__LOAD_EXAMPLES
+          value: "False"
+        - name: AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS
+          value: "False"

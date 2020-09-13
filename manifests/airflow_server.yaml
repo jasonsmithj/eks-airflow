@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-server
+  namespace: airflow
+  labels:
+    app: airflow-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow-server
+  template:
+    metadata:
+      labels:
+        app: airflow-server
+    spec:
+      containers:
+      - name: airflow-server
+        image: <your image>
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 1000
+          allowPrivilegeEscalation: false
+        resources:
+          limits:
+            memory: "1024Mi"
+          requests:
+            memory: "1024Mi"
+        command:
+          - /entrypoint.sh
+          - webserver
+        env:
+        - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+          valueFrom:
+            secretKeyRef:
+              name: airflow-secret
+              key: db_uri
+        - name: AIRFLOW__CELERY__RESULT_BACKEND
+          valueFrom:
+            secretKeyRef:
+              name: airflow-secret
+              key: db_uri
+        - name: AIRFLOW__CELERY__BROKER_URL
+          value: redis://airflow-redis:6379/1
+        - name: AIRFLOW__CORE__LOAD_EXAMPLES
+          value: "False"
+        - name: AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS
+          value: "False"
+        - name: FERNET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: airflow-secret
+              key: fernet_key
+        - name: EXECUTOR
+          value: "Celery"
+        - name: GOOGLE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: airflow-secret
+              key: google_client_id
+        - name: GOOGLE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: airflow-secret
+              key: google_client_secret
+        ports:
+        - containerPort: 8080
+          name: airflow
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: airflow-server
+  namespace: airflow
+  labels:
+    app: airflow-server
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: airflow-server

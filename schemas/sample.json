@@ -1,0 +1,52 @@
+[
+  {
+    "mode": "NULLABLE",
+    "name": "company_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "company_name",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "email",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "phone_number",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ship_id",
+    "type": "INTEGER"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ship_name",
+    "type": "STRING"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "company_updated_at",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "company_created_at",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ship_updated_at",
+    "type": "TIMESTAMP"
+  },
+  {
+    "mode": "NULLABLE",
+    "name": "ship_created_at",
+    "type": "TIMESTAMP"
+  }
+]
