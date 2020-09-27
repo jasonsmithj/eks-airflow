@@ -19,7 +19,7 @@ pip install sops
 
 ### AWS KMSのkeyを指定
 ```bash
-export SOPS_KMS_ARN="arn:aws:kms:ap-northeast-1:<your aws ccount id>:key/<your kms key>
+export SOPS_KMS_ARN="arn:aws:kms:ap-northeast-1:<your aws account id>:key/<your kms key>
 ```
 
 ### 暗号化ファイルの編集
